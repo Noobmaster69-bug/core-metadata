@@ -1,0 +1,27 @@
+{
+  "name": "core",
+  "version": "1.0.0",
+  "description": "core of IoT Edge",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Noobmaster69-bug/core.git"
+  },
+  "keywords": [
+    "IoT",
+    "Edge",
+    "IoT",
+    "Edge",
+    "IoT",
+    "Core"
+  ],
+  "author": "Uy Son Tran",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Noobmaster69-bug/core/issues"
+  },
+  "homepage": "https://github.com/Noobmaster69-bug/core#readme"
+}
