@@ -4,7 +4,10 @@
   "description": "core of IoT Edge",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "set dev=true& nodemon index.js",
+    "dev": "dev=true& nodemon index.js",
+    "dev:window": "set dev=true& nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -23,5 +26,19 @@
   "bugs": {
     "url": "https://github.com/Noobmaster69-bug/core/issues"
   },
-  "homepage": "https://github.com/Noobmaster69-bug/core#readme"
+  "homepage": "https://github.com/Noobmaster69-bug/core#readme",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "morgan": "^1.10.0",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
+    "pm2": "^5.2.0",
+    "sequelize": "^6.17.0"
+  },
+  "devDependencies": {
+    "debug": "^4.3.3",
+    "forever": "^4.0.3",
+    "nodemon": "^2.0.15"
+  }
 }
