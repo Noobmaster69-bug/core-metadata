@@ -74,6 +74,7 @@ property.command = property.hasOne(command, {
 command.channels = command.hasMany(channels, {
   foreignKey: { name: "commandName", allowNull: false },
 });
+channels.belongsTo(command);
 (async function () {
   try {
     await sequelize.sync();
@@ -82,4 +83,4 @@ command.channels = command.hasMany(channels, {
     debug(err);
   }
 })();
-module.exports = { property, command };
+module.exports = { property, command, channels };

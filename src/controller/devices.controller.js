@@ -1,5 +1,6 @@
 const debug = require("../utils/debug")("app/newDevices");
 const { property, command } = require("../model/device.model");
+const axios = require("axios");
 module.exports = {
   newDevices: async function (req, res) {
     const {
