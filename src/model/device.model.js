@@ -1,23 +1,49 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/sequelize");
 const debug = require("../utils/debug")("model");
-const property = sequelize.define("property", {
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    primaryKey: true,
-    unique: true,
+const property = sequelize.define(
+  "property",
+  {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      primaryKey: true,
+      unique: true,
+    },
+    interval: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    NorthProtocol: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    SouthProtocol: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    NorthUrl: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    SouthUrl: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    startTime: {
+      type: DataTypes.DATE,
+    },
+    isProvision: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
   },
-  interval: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  method: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-});
-const command = sequelize.define("command", {
+  {
+    timestamps: false,
+  }
+);
+const dsModbus = sequelize.define("ds-modbus", {
   name: {
     type: DataTypes.STRING,
     primaryKey: true,
@@ -67,14 +93,46 @@ const channels = sequelize.define("channels", {
   quantity: {
     type: DataTypes.INTEGER,
   },
+  parse: {
+    type: DataTypes.ENUM,
+    value: [
+      "BigInt64BE",
+      "BigInt64LE",
+      "BigUInt64BE",
+      "BigUInt64LE",
+      "DoubleBE",
+      "DoubleLE",
+      "FloatBE",
+      "FloatLE",
+      "Int8",
+      "Int16BE",
+      "Int16LE",
+      "Int32BE",
+      "Int32LE",
+      "IntBE",
+      "IntLE",
+      "UInt8",
+      "UInt16BE",
+      "UInt16LE",
+      "UInt32BE",
+      "UInt32LE",
+      "UIntBE",
+      "UIntLE",
+      "key/value",
+    ],
+    allowNull: false,
+  },
+  parser: {
+    type: DataTypes.JSON,
+  },
 });
-property.command = property.hasOne(command, {
-  foreignKey: { name: "propertyName", allowNull: false },
+property.dsModbus = property.hasOne(dsModbus, {
+  foreignKey: { name: "name", allowNull: false },
 });
-command.channels = command.hasMany(channels, {
-  foreignKey: { name: "commandName", allowNull: false },
+dsModbus.channels = dsModbus.hasMany(channels, {
+  foreignKey: { name: "name", allowNull: false },
 });
-channels.belongsTo(command);
+channels.belongsTo(dsModbus);
 (async function () {
   try {
     await sequelize.sync();
@@ -83,4 +141,4 @@ channels.belongsTo(command);
     debug(err);
   }
 })();
-module.exports = { property, command, channels };
+module.exports = { property, dsModbus, channels };
