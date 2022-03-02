@@ -26,10 +26,7 @@ const property = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    SouthUrl: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
+
     startTime: {
       type: DataTypes.DATE,
     },
@@ -95,7 +92,7 @@ const channels = sequelize.define("channels", {
   },
   parse: {
     type: DataTypes.ENUM,
-    value: [
+    values: [
       "BigInt64BE",
       "BigInt64LE",
       "BigUInt64BE",

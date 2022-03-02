@@ -1,13 +1,18 @@
 const debug = require("../utils/debug")("app/newDevices");
-const { property, command } = require("../model/device.model");
+const { property, dsModbus } = require("../model/device.model");
 const axios = require("axios");
 module.exports = {
   newDevices: async function (req, res) {
     const {
       name,
       interval,
+      NorthProtocol,
+      SouthProtocol,
+      NorthUrl,
+      startTime,
+      isProvision,
+
       host,
-      method,
       id,
       baudRate,
       parity,
@@ -21,8 +26,12 @@ module.exports = {
         {
           name,
           interval,
-          method,
-          command: {
+          NorthProtocol,
+          SouthProtocol,
+          NorthUrl,
+          startTime,
+          isProvision,
+          dsModbus: {
             name,
             host,
             id,
@@ -37,8 +46,8 @@ module.exports = {
         {
           include: [
             {
-              association: property.command,
-              include: [command.channels],
+              association: property.dsModbus,
+              include: [dsModbus.channels],
             },
           ],
         }
