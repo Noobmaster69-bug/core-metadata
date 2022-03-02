@@ -1,12 +1,12 @@
 const debug = require("../utils/debug")("app/getCommand");
-const { dsModbus, channels } = require("../model/device.model");
+const { command, channels } = require("../model/device.model");
 module.exports = {
   getCommandByName: async function (req, res) {
     const { name } = req.body;
     try {
       return res.send(
         (
-          await dsModbus.findAll({
+          await command.findAll({
             where: { name: name },
             include: { model: channels },
           })

@@ -1,18 +1,13 @@
 const debug = require("../utils/debug")("app/newDevices");
-const { property, dsModbus } = require("../model/device.model");
+const { property, command } = require("../model/device.model");
 const axios = require("axios");
 module.exports = {
   newDevices: async function (req, res) {
     const {
       name,
       interval,
-      NorthProtocol,
-      SouthProtocol,
-      NorthUrl,
-      startTime,
-      isProvision,
-
       host,
+      SouthProtocol,
       id,
       baudRate,
       parity,
@@ -26,12 +21,8 @@ module.exports = {
         {
           name,
           interval,
-          NorthProtocol,
           SouthProtocol,
-          NorthUrl,
-          startTime,
-          isProvision,
-          dsModbus: {
+          command: {
             name,
             host,
             id,
@@ -46,14 +37,15 @@ module.exports = {
         {
           include: [
             {
-              association: property.dsModbus,
-              include: [dsModbus.channels],
+              association: property.command,
+              include: [command.channels],
             },
           ],
         }
       );
       res.sendStatus(200);
     } catch (err) {
+      debug(err.message);
       if (
         err.message === "Validation error" &&
         err.parent.table !== "properties"
