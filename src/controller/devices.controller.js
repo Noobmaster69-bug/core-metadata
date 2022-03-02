@@ -8,12 +8,15 @@ module.exports = {
       interval,
       host,
       SouthProtocol,
+      NorthProtocol,
+      NorthUrl,
       id,
       baudRate,
       parity,
       stopBits,
       dataBits,
       channels,
+      startTime,
       port,
     } = req.body;
     try {
@@ -22,6 +25,10 @@ module.exports = {
           name,
           interval,
           SouthProtocol,
+          SouthProtocol,
+          NorthProtocol,
+          NorthUrl,
+          startTime,
           command: {
             name,
             host,
