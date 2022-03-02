@@ -81,6 +81,8 @@ const channels = sequelize.define(
   {
     channel_name: {
       type: DataTypes.STRING,
+      allowNull: false,
+      primaryKey: true,
       unique: true,
     },
     fc: {
