@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
 const debug = require("../utils/debug")("postgreSQL");
-
+const { spawn } = require("child_process");
 (async () => {
   const { Client } = require("pg");
   const client = new Client({
@@ -22,6 +22,10 @@ const debug = require("../utils/debug")("postgreSQL");
       await client.query("CREATE DATABASE CORE");
       debug("Created CORE database");
       debug("Restarting server");
+      spawn(/^win/.test(process.platform) ? "pm2.cmd" : "pm2", [
+        "restart",
+        "core-metadata",
+      ]);
     }
   } catch (err) {
     debug(err);

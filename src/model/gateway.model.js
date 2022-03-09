@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/sequelize");
 const debug = require("../utils/debug")("model");
-const { Op } = require("sequelize");
+
 const gatewayInfo = sequelize.define(
   "gatewayInfo",
   {
@@ -25,7 +25,11 @@ const gatewayInfo = sequelize.define(
     await sequelize.sync();
     debug("All models were synchronized successfully.");
   } catch (err) {
-    debug(err);
+    require("child_process").spawn(
+      /^win/.test(process.platform) ? "pm2.cmd" : "pm2",
+      ["restart", "core-metadata"]
+    );
+    process.send("ready");
   }
 })();
 module.exports = { gatewayInfo };

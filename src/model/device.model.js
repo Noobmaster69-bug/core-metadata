@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/sequelize");
 const debug = require("../utils/debug")("model");
-const property = sequelize.define(
-  "property",
+const devices = sequelize.define(
+  "devices",
   {
     name: {
       type: DataTypes.STRING,
@@ -14,19 +14,15 @@ const property = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    SouthProtocol: {
+    southProtocol: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    NorthProtocol: {
+    northProtocol: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    NorthUrl: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    Startime: {
+    startTime: {
       type: DataTypes.DATE,
     },
   },
@@ -34,15 +30,38 @@ const property = sequelize.define(
     timestamps: false,
   }
 );
-const command = sequelize.define(
-  "command",
+
+const northUrls = sequelize.define(
+  "northUrls",
+  {
+    url: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      primaryKey: true,
+      unique: true,
+    },
+    protocol: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  },
+  {
+    timestamps: false,
+  }
+);
+northUrls.northProtocol = northUrls.belongsTo(devices, {
+  foreignKey: "northUrl",
+});
+
+const modbusRTUs = sequelize.define(
+  "modbusRTUs",
   {
     name: {
       type: DataTypes.STRING,
       primaryKey: true,
       unique: true,
     },
-    host: {
+    path: {
       type: DataTypes.STRING,
       unique: "compositeIndex",
       allowNull: false,
@@ -51,9 +70,6 @@ const command = sequelize.define(
       type: DataTypes.STRING,
       unique: "compositeIndex",
       allowNull: false,
-    },
-    port: {
-      type: DataTypes.INTEGER,
     },
     baudRate: {
       type: DataTypes.INTEGER,
@@ -76,6 +92,53 @@ const command = sequelize.define(
     timestamps: false,
   }
 );
+devices.modbusRTUs = devices.hasOne(modbusRTUs);
+const modbusTCPs = sequelize.define(
+  "modbusTCPs",
+  {
+    name: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+      unique: true,
+    },
+    host: {
+      type: DataTypes.STRING,
+      unique: "compositeIndex",
+      allowNull: false,
+    },
+    id: {
+      type: DataTypes.STRING,
+      unique: "compositeIndex",
+      allowNull: false,
+    },
+    port: {
+      type: DataTypes.INTEGER,
+    },
+  },
+  {
+    timestamps: false,
+  }
+);
+devices.modbusTCPs = devices.hasOne(modbusTCPs);
+const models = sequelize.define(
+  "models",
+  {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      primaryKey: true,
+      unique: true,
+    },
+  },
+  {
+    timestamps: false,
+  }
+);
+devices.models = devices.belongsTo(models, {
+  foreignKey: {
+    type: DataTypes.STRING,
+  },
+});
 const channels = sequelize.define(
   "channels",
   {
@@ -83,16 +146,25 @@ const channels = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
-      unique: true,
+      unique: "compositeIndex",
+    },
+    modelName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      primaryKey: true,
+      unique: "compositeIndex",
     },
     fc: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     addr: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     quantity: {
       type: DataTypes.INTEGER,
+      allowNull: false,
     },
     parse: {
       type: DataTypes.ENUM,
@@ -119,7 +191,6 @@ const channels = sequelize.define(
         "UInt32LE",
         "UIntBE",
         "UIntLE",
-        "key/value",
       ],
       allowNull: false,
     },
@@ -129,21 +200,28 @@ const channels = sequelize.define(
   },
   {
     timestamps: false,
+    indexes: [{ fields: ["modelName", "addr"], unique: true }],
   }
 );
-property.command = property.hasOne(command, {
-  foreignKey: { name: "propertyName", allowNull: false },
-});
-command.channels = command.hasMany(channels, {
-  foreignKey: { name: "commandName", allowNull: false },
-});
-channels.belongsTo(command);
+models.channels = models.hasMany(channels);
 (async function () {
   try {
     await sequelize.sync();
     debug("All models were synchronized successfully.");
   } catch (err) {
-    debug(err);
+    debug("Sync fail, restarting server");
+    require("child_process").spawn(
+      /^win/.test(process.platform) ? "pm2.cmd" : "pm2",
+      ["restart", "core-metadata"]
+    );
+    process.send("ready");
   }
 })();
-module.exports = { property, command, channels };
+module.exports = {
+  devices,
+  channels,
+  modbusRTUs,
+  modbusTCPs,
+  northUrls,
+  models,
+};
