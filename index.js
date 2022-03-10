@@ -1,5 +1,5 @@
 const debug = require("./src/utils/debug")("app");
-
+("use strict");
 require("./src/config/index")();
 const app = require("express")();
 //middleware

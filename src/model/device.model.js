@@ -195,7 +195,7 @@ const channels = sequelize.define(
       allowNull: false,
     },
     parser: {
-      type: DataTypes.JSON,
+      type: DataTypes.STRING,
     },
   },
   {
