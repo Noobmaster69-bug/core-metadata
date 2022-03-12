@@ -14,44 +14,34 @@ const devices = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    southProtocol: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     northProtocol: {
+      type: DataTypes.STRING,
+    },
+    northUrl: {
+      type: DataTypes.STRING,
+    },
+    southProtocol: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     startTime: {
       type: DataTypes.DATE,
     },
-  },
-  {
-    timestamps: false,
-  }
-);
-
-const northUrls = sequelize.define(
-  "northUrls",
-  {
-    url: {
-      type: DataTypes.STRING,
+    isProvision: {
+      type: DataTypes.BOOLEAN,
       allowNull: false,
-      primaryKey: true,
-      unique: true,
+      defaultValue: false,
     },
-    protocol: {
-      type: DataTypes.STRING,
+    isPersistence: {
+      type: DataTypes.BOOLEAN,
       allowNull: false,
+      defaultValue: false,
     },
   },
   {
     timestamps: false,
   }
 );
-northUrls.northProtocol = northUrls.belongsTo(devices, {
-  foreignKey: "northUrl",
-});
 
 const modbusRTUs = sequelize.define(
   "modbusRTUs",
@@ -92,7 +82,10 @@ const modbusRTUs = sequelize.define(
     timestamps: false,
   }
 );
-devices.modbusRTUs = devices.hasOne(modbusRTUs);
+// modbusRTUs.devices = modbusRTUs.hasOne(devices, {
+//   as: "ModbusRTUs",
+//   foreignKey: "name",
+// });
 const modbusTCPs = sequelize.define(
   "modbusTCPs",
   {
@@ -119,7 +112,10 @@ const modbusTCPs = sequelize.define(
     timestamps: false,
   }
 );
-devices.modbusTCPs = devices.hasOne(modbusTCPs);
+// modbusTCPs.devices = modbusTCPs.hasOne(devices, {
+//   as: "modbusTCPs",
+//   foreignKey: "name",
+// });
 const models = sequelize.define(
   "models",
   {
@@ -134,11 +130,7 @@ const models = sequelize.define(
     timestamps: false,
   }
 );
-devices.models = devices.belongsTo(models, {
-  foreignKey: {
-    type: DataTypes.STRING,
-  },
-});
+models.devices = models.hasMany(devices, { foreignKey: { name: "model" } });
 const channels = sequelize.define(
   "channels",
   {
@@ -222,6 +214,6 @@ module.exports = {
   channels,
   modbusRTUs,
   modbusTCPs,
-  northUrls,
+
   models,
 };
