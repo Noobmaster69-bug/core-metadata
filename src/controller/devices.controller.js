@@ -4,6 +4,7 @@ const {
   devices,
   modbusRTUs,
   modbusTCPs,
+  channels,
 } = require("../model/device.model");
 const axios = require("axios");
 module.exports = {
@@ -34,33 +35,36 @@ module.exports = {
           northProtocol,
           northUrl,
           startTime,
-          // [southProtocol]: {
-          //   path,
-          //   name,
-          //   host,
-          //   id,
-          //   port,
-          //   baudRate,
-          //   parity,
-          //   stopBits,
-          //   dataBits,
-          // },
-          model,
+          [southProtocol]: {
+            path,
+            name,
+            host,
+            id,
+            port,
+            baudRate,
+            parity,
+            stopBits,
+            dataBits,
+          },
+          modelName: model,
+        },
+        {
+          include: [
+            { association: devices.modbusRTUs },
+            { association: devices.modbusTCPs },
+          ],
         }
-        // {
-        //   include: [modbusRTUs.devices, modbusTCPs.devices],
-        // }
       );
       res.sendStatus(200);
     } catch (err) {
-      debug(err);
-      // try {
-      //   // (await devices.findOne({ name: name })).destroy();
-      //   res.sendStatus(404);
-      // } catch (err) {
-      //   debug(err);
-      //   res.sendStatus(404);
-      // }
+      debug(err.message);
+      try {
+        (await devices.findOne({ name: name })).destroy();
+        res.sendStatus(404);
+      } catch (err) {
+        debug(err);
+        res.sendStatus(404);
+      }
     }
   },
   delete: async function (req, res) {
@@ -78,7 +82,11 @@ module.exports = {
     try {
       const result = await devices.findOne({
         where: { name: name },
-        include: [],
+        include: [
+          { model: models, include: [channels] },
+          { model: modbusRTUs },
+          { model: modbusTCPs },
+        ],
       });
       if (result) {
         return res.send(result);

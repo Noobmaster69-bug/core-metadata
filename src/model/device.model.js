@@ -82,10 +82,7 @@ const modbusRTUs = sequelize.define(
     timestamps: false,
   }
 );
-// modbusRTUs.devices = modbusRTUs.hasOne(devices, {
-//   as: "ModbusRTUs",
-//   foreignKey: "name",
-// });
+devices.modbusRTUs = devices.hasOne(modbusRTUs, { onDelete: "CASCADE" });
 const modbusTCPs = sequelize.define(
   "modbusTCPs",
   {
@@ -112,10 +109,7 @@ const modbusTCPs = sequelize.define(
     timestamps: false,
   }
 );
-// modbusTCPs.devices = modbusTCPs.hasOne(devices, {
-//   as: "modbusTCPs",
-//   foreignKey: "name",
-// });
+devices.modbusTCPs = devices.hasOne(modbusTCPs, { onDelete: "CASCADE" });
 const models = sequelize.define(
   "models",
   {
@@ -130,7 +124,8 @@ const models = sequelize.define(
     timestamps: false,
   }
 );
-models.devices = models.hasMany(devices, { foreignKey: { name: "model" } });
+models.devices = models.hasMany(devices);
+devices.models = devices.belongsTo(models);
 const channels = sequelize.define(
   "channels",
   {
@@ -214,6 +209,5 @@ module.exports = {
   channels,
   modbusRTUs,
   modbusTCPs,
-
   models,
 };
