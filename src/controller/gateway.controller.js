@@ -1,5 +1,18 @@
 const { gatewayInfo } = require("../model/gateway.model");
 const debug = require("../utils/debug")("app/Gateway");
+const { client } = require("../config/redis");
+(async function () {
+  try {
+    const result = await gatewayInfo.findOne({
+      where: {
+        property: "gatewayId",
+      },
+    });
+    await client.set("gatewayId", result);
+  } catch (err) {
+    debug(err);
+  }
+})();
 module.exports = {
   getGatewayId: async function (req, res) {
     try {
@@ -34,8 +47,10 @@ module.exports = {
           },
         }
       );
+      res.sendStatus(200);
     } catch (err) {
       debug(err.message);
+      res.sendStatus(400);
     }
   },
   createGatewayId: async function (req, res) {
@@ -44,8 +59,11 @@ module.exports = {
         property: "gatewayId",
         values: req.body.gatewayId,
       });
+      await client.set("gatewayId", req.body.gatewayId);
+      return res.sendStatus(201);
     } catch (err) {
       debug(err.message);
+      return res.sendStatus(400);
     }
   },
 };

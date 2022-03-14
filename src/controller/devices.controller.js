@@ -6,7 +6,6 @@ const {
   modbusTCPs,
   channels,
 } = require("../model/device.model");
-const axios = require("axios");
 module.exports = {
   newDevices: async function (req, res) {
     const {
@@ -55,15 +54,27 @@ module.exports = {
           ],
         }
       );
-      res.sendStatus(200);
+      res.sendStatus(201);
     } catch (err) {
-      debug(err.message);
+      console.log(err);
       try {
-        (await devices.findOne({ name: name })).destroy();
-        res.sendStatus(404);
+        if (err.errors[0].message === "name must be unique") {
+          throw new Error("Device name existed");
+        }
+        if (
+          err.parent.table !== "devices" &&
+          err.message === "Validation error"
+        ) {
+          try {
+            (await devices.findOne({ name: name })).destroy();
+          } catch (err) {
+            throw new Error(err);
+          }
+        } else {
+          throw new Error("Not handled error");
+        }
       } catch (err) {
-        debug(err);
-        res.sendStatus(404);
+        res.status(400).send(err.message);
       }
     }
   },
