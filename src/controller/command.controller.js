@@ -1,5 +1,5 @@
 const debug = require("../utils/debug")("app/getCommand");
-const { command, channels } = require("../model/device.model");
+const { command, channels } = require("../model/index");
 module.exports = {
   getCommandByName: async function (req, res) {
     const { name } = req.body;

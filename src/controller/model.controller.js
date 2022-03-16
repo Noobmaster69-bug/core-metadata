@@ -1,20 +1,23 @@
-const { models, channels } = require("../model/device.model");
+const { models, modbusChannels } = require("../model/index");
 const debug = require("../utils/debug")("app/modelController");
 const { Op } = require("sequelize");
+const { type } = require("express/lib/response");
 const controller = {
   create: async function (req, res) {
-    const { name, channels } = req.body;
+    const { name, channels, manufacture, type } = req.body;
     try {
       if (channels) {
         await models.create(
           {
             name,
-            channels: [...channels],
+            manufacture,
+            type,
+            [type]: [...channels],
           },
           {
             include: [
               {
-                association: models.channels,
+                association: models.modbusChannels,
               },
             ],
           }
@@ -22,7 +25,7 @@ const controller = {
         res.sendStatus(201);
       }
     } catch (err) {
-      debug(err);
+      console.log(err);
       try {
         if (err?.parent?.table === "models") {
           if (err.name === "SequelizeUniqueConstraintError") {
@@ -54,7 +57,7 @@ const controller = {
     try {
       const result = await models.findOne({
         where: { name: name },
-        include: { model: channels },
+        include: { model: modbusChannels },
       });
       if (result) {
         return res.send(result);
@@ -77,85 +80,31 @@ const controller = {
     }
   },
   update: async function (req, res) {
-    const { oldName } = req.query;
+    const { id } = req.query;
     try {
       const { body } = req;
-      const channel_nameVadidator = body.channels.filter(
-        (item, index) =>
-          body.channels.findIndex(
-            (e) => e.channel_name === item.channel_name
-          ) !== index
+      await models.update(
+        { name: body.name, manufacture: body.manufacture, type: body.type },
+        { where: { id: id } }
       );
-      const addrVadidator = body.channels.filter(
-        (item, index) =>
-          body.channels.findIndex((e) => e.addr === item.addr) !== index
-      );
-      if (channel_nameVadidator.length) {
-        throw new Error("channel_name duplicated");
-      }
-      if (addrVadidator.length) {
-        throw new Error("addr duplicated");
-      }
-      await models.update({ name: body.name }, { where: { name: oldName } });
-      try {
-        const unChangedChannels = await channels.findAll({
-          where: {
-            channel_name: {
-              [Op.in]: body.channels.map((e) => e.channel_name),
-            },
-            modelName: {
-              [Op.in]: [body.name],
-            },
-            fc: {
-              [Op.in]: body.channels.map((e) => e.fc),
-            },
-            addr: {
-              [Op.in]: body.channels.map((e) => e.addr),
-            },
-            quantity: {
-              [Op.in]: body.channels.map((e) => e.quantity),
-            },
-            parse: {
-              [Op.in]: body.channels.map((e) => e.parse),
-            },
-            parser: {
-              [Op.in]: body.channels.map((e) => e.parser),
-            },
-          },
-        });
-        const changedChannels = await channels.findAll({
-          where: {
-            channel_name: {
-              [Op.notIn]: unChangedChannels.map((e) => e.channel_name),
-            },
-          },
-        });
-        for (const channel of changedChannels) {
-          try {
-            await channel.destroy();
-          } catch (err) {
-            throw err;
-          }
+      for (const channel of body.channels) {
+        switch (body.type) {
+          case "modbusChannels":
+            try {
+              await modbusChannels.update(
+                { ...channel },
+                { where: { id: channel.id } }
+              );
+            } catch (err) {
+              console.log(err);
+              throw new Error(err.message);
+            }
         }
-
-        const newChannels = body.channels.filter(
-          ({ channel_name }) =>
-            !unChangedChannels.some((e) => e.channel_name === channel_name)
-        );
-        for (const channel of newChannels) {
-          try {
-            await channels.create({ ...channel, modelName: body.name });
-          } catch (err) {
-            throw err;
-          }
-        }
-        res.sendStatus(200);
-      } catch (err) {
-        throw err;
       }
+      res.send(201);
     } catch (err) {
-      debug(err);
-      return res.sendStatus(400);
+      console.log(err);
+      return res.status(400).send(err.message);
     }
   },
 };

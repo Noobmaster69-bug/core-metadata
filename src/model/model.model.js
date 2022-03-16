@@ -17,24 +17,29 @@ const models = sequelize.define(
     manufacture: {
       type: DataTypes.STRING,
     },
+    type: {
+      type: DataTypes.STRING,
+      modelId: DataTypes.INTEGER,
+    },
   },
   {
     timestamps: false,
   }
 );
-const channels = sequelize.define("channels", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  type: {
-    type: DataTypes.STRING,
-    modelId: DataTypes.INTEGER,
-  },
-});
+// const channels = sequelize.define("channels", {
+//   id: {
+//     type: DataTypes.INTEGER,
+//     primaryKey: true,
+//     autoIncrement: true,
+//     unique: true,
+//   },
+//   type: {
+//     type: DataTypes.STRING,
+//     modelId: DataTypes.INTEGER,
+//   },
+// });
 const modbusChannels = sequelize.define(
-  "channels",
+  "modbusChannels",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -47,10 +52,9 @@ const modbusChannels = sequelize.define(
       primaryKey: true,
       unique: "compositeIndex",
     },
-    channelId: {
-      type: DataTypes.STRING,
+    modelId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true,
       unique: "compositeIndex",
     },
     fc: {
@@ -99,11 +103,11 @@ const modbusChannels = sequelize.define(
   },
   {
     timestamps: false,
-    indexes: [{ fields: ["modelName", "addr"], unique: true }],
+    indexes: [{ fields: ["modelId", "addr"], unique: true }],
   }
 );
 module.exports = {
   models,
-  channels,
+  // channels,
   modbusChannels,
 };

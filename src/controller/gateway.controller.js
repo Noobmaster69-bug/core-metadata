@@ -1,7 +1,7 @@
-const { gatewayInfo } = require("../model/gateway.model");
-const debug = require("../utils/debug")("app/Gateway");
+const { gatewayInfo } = require("../model/index");
+const debug = require("../utils/debug")("gatewayId");
 const { client } = require("../config/redis");
-(async function () {
+async function fetchGatewayId() {
   try {
     const result = await gatewayInfo.findOne({
       where: {
@@ -10,9 +10,14 @@ const { client } = require("../config/redis");
     });
     await client.set("gatewayId", result);
   } catch (err) {
-    debug(err);
+    if (err.message === "read ECONNRESET") {
+      fetchGatewayId();
+    } else {
+      debug(err.message);
+    }
   }
-})();
+}
+fetchGatewayId();
 module.exports = {
   getGatewayId: async function (req, res) {
     try {

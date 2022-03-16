@@ -5,7 +5,7 @@ const {
   modbusRTUs,
   modbusTCPs,
   channels,
-} = require("../model/device.model");
+} = require("../model/index");
 module.exports = {
   newDevices: async function (req, res) {
     const {

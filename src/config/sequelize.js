@@ -21,11 +21,6 @@ const { spawn } = require("child_process");
       debug("Missing database, creating one");
       await client.query("CREATE DATABASE CORE");
       debug("Created CORE database");
-      debug("Restarting server");
-      spawn(/^win/.test(process.platform) ? "pm2.cmd" : "pm2", [
-        "restart",
-        "core-metadata",
-      ]);
     }
   } catch (err) {
     debug(err);
@@ -41,4 +36,13 @@ const sequelize = new Sequelize(
     logging: false,
   }
 );
+async function checkForConnection() {
+  try {
+    await sequelize.authenticate();
+    debug("Connection has been established successfully.");
+  } catch (error) {
+    checkForConnection();
+  }
+}
+checkForConnection();
 module.exports = sequelize;

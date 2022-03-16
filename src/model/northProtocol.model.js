@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/sequelize");
-const { models } = require("./model.model");
+
 const northProtocols = sequelize.define("northProtocols", {
   id: {
     type: DataTypes.INTEGER,

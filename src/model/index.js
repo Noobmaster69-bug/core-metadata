@@ -3,10 +3,12 @@ const {
   modbusRTUs,
   modbusTCPs,
 } = require("./southProtocol.model");
-const { models, channels, modbusChannels } = require("./model.model");
+const { models, modbusChannels } = require("./model.model");
 const { devices } = require("./device.model");
 const { gatewayInfo } = require("./gateway.model");
 const { northProtocols, mqtts } = require("./northProtocol.model");
+const debug = require("../utils/debug")("model");
+const sequelize = require("../config/sequelize");
 devices.southProtocols = devices.belongsTo(southProtocols, {
   foreignKey: "southProtocolId",
   onDelete: "CASCADE",
@@ -30,30 +32,31 @@ mqtts.northProtocols = mqtts.belongsTo(northProtocols, {
 devices.models = devices.belongsTo(models, {
   foreignKey: "modelId",
 });
-channels.models = devices.belongsTo(models, {
+models.modbusChannels = models.hasMany(modbusChannels, {
   foreignKey: "modelId",
   onDelete: "CASCADE",
 });
-modbusChannels.channels = modbusChannels.belongsTo(channels, {
-  foreignKey: "channelId",
-  onDelete: "CASCADE",
-});
-(async function () {
+async function sync() {
   try {
     await sequelize.sync();
     debug("All models were synchronized successfully.");
   } catch (err) {
-    debug(err);
-    console.log(err);
+    if (
+      err.message === 'database "core" does not exist' ||
+      err.message === "read ECONNRESET"
+    ) {
+      sync();
+    } else {
+      debug(err.message);
+    }
   }
-})();
-
+}
+sync();
 module.exports = {
   southProtocols,
   modbusRTUs,
   modbusTCPs,
   models,
-  channels,
   modbusChannels,
   devices,
   gatewayInfo,

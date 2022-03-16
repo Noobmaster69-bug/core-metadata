@@ -5,7 +5,7 @@ const {
   modbusRTUs,
   modbusTCPs,
   channels,
-} = require("../model/device.model");
+} = require("../model/index");
 const { Op } = require("sequelize");
 module.exports = {
   getAllSchedule: async function (req, res) {

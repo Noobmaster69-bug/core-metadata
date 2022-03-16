@@ -22,7 +22,7 @@ const devices = sequelize.define(
     },
 
     southProtocolId: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     startTime: {
