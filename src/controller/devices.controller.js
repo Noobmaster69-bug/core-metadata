@@ -83,7 +83,7 @@ module.exports = {
         ],
       });
       if (result) {
-        return res.send(result);
+        return res.send(result.toJSON());
       } else {
         throw new Error();
       }

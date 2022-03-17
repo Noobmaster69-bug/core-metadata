@@ -24,6 +24,9 @@ mqtts.devices = mqtts.belongsTo(devices, {
 devices.models = devices.belongsTo(models, {
   foreignKey: "modelId",
 });
+models.hasOne(devices, {
+  foreignKey: "modelId",
+});
 models.modbusChannels = models.hasMany(modbusChannels, {
   foreignKey: "modelId",
   onDelete: "CASCADE",
