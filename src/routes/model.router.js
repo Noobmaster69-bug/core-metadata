@@ -1,8 +1,8 @@
 const controller = require("../controller/model.controller");
 ("use strict");
 const Router = require("express").Router();
-Router.post("/create", controller.create);
-Router.get("/get", controller.get);
-Router.delete("/delete", controller.delete);
-Router.post("/update", controller.update);
+Router.post("/", controller.create);
+Router.get("/", controller.get);
+Router.delete("/", controller.delete);
+Router.put("/", controller.update);
 module.exports = Router;

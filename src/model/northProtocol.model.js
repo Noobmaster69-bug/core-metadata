@@ -1,23 +1,13 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/sequelize");
 
-const northProtocols = sequelize.define("northProtocols", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  type: {
-    type: DataTypes.STRING,
-  },
-});
 const mqtts = sequelize.define("mqtts", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  northProtocolId: {
+  deviceId: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
@@ -73,6 +63,5 @@ const mqtts = sequelize.define("mqtts", {
   },
 });
 module.exports = {
-  northProtocols,
   mqtts,
 };

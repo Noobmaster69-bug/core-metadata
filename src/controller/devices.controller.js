@@ -4,53 +4,47 @@ const {
   devices,
   modbusRTUs,
   modbusTCPs,
-  channels,
+  mqtts,
 } = require("../model/index");
 module.exports = {
   newDevices: async function (req, res) {
-    const {
-      path,
-      name,
-      interval,
-      host,
-      southProtocol,
-      northProtocol,
-      id,
-      baudRate,
-      northUrl,
-      parity,
-      stopBits,
-      dataBits,
-      startTime,
-      port,
-      model,
-    } = req.body;
+    const { name, interval, southProtocol, northProtocol, startTime, model } =
+      req.body;
     try {
       await devices.create(
         {
           name,
           interval,
-          southProtocol,
-          northProtocol,
-          northUrl,
-          startTime,
-          [southProtocol]: {
-            path,
-            name,
-            host,
-            id,
-            port,
-            baudRate,
-            parity,
-            stopBits,
-            dataBits,
+          southProtocol: {
+            type: southProtocol.type,
+            [southProtocol.type]: {
+              ...southProtocol,
+            },
           },
-          modelName: model,
+          northProtocol: {
+            type: northProtocol.type,
+            [northProtocol.type]: {
+              ...northProtocol,
+            },
+          },
+          startTime,
+          modelId: model,
         },
         {
           include: [
-            { association: devices.modbusRTUs },
-            { association: devices.modbusTCPs },
+            {
+              association: devices.southProtocols,
+              include: [
+                {
+                  association: modbusRTUs.southProtocols,
+                },
+                { association: modbusTCPs.southProtocols },
+              ],
+            },
+            {
+              association: devices.northProtocols,
+              include: [mqtts.northProtocols],
+            },
           ],
         }
       );

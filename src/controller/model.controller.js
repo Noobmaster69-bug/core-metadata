@@ -5,6 +5,7 @@ const { type } = require("express/lib/response");
 const controller = {
   create: async function (req, res) {
     const { name, channels, manufacture, type } = req.body;
+    console.log(req.body);
     try {
       if (channels) {
         await models.create(
@@ -53,10 +54,10 @@ const controller = {
     }
   },
   get: async function (req, res) {
-    const { name } = req.query;
+    const { name = null, id = null } = req.query;
     try {
       const result = await models.findOne({
-        where: { name: name },
+        where: { [Op.or]: { name: name, id: id } },
         include: { model: modbusChannels },
       });
       if (result) {
@@ -70,9 +71,9 @@ const controller = {
     }
   },
   delete: async function (req, res) {
-    const { name } = req.query;
+    const { name = null, id = null } = req.query;
     try {
-      await models.destroy({ where: { name: name } });
+      await models.destroy({ where: { [Op.or]: { name: name, id: id } } });
       return res.sendStatus(200);
     } catch (err) {
       debug(err.message);
@@ -80,12 +81,12 @@ const controller = {
     }
   },
   update: async function (req, res) {
-    const { id } = req.query;
+    const { name = null, id = null } = req.query;
     try {
       const { body } = req;
       await models.update(
         { name: body.name, manufacture: body.manufacture, type: body.type },
-        { where: { id: id } }
+        { where: { [Op.or]: { name: name, id: id } } }
       );
       for (const channel of body.channels) {
         switch (body.type) {

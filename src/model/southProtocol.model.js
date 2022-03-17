@@ -1,16 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/sequelize");
 
-const southProtocols = sequelize.define("southProtocols", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  type: {
-    type: DataTypes.STRING,
-  },
-});
 const modbusRTUs = sequelize.define(
   "modbusRTUs",
   {
@@ -87,4 +77,4 @@ const modbusTCPs = sequelize.define(
     timestamps: false,
   }
 );
-module.exports = { southProtocols, modbusRTUs, modbusTCPs };
+module.exports = { modbusRTUs, modbusTCPs };
