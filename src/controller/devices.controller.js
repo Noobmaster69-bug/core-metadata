@@ -5,46 +5,34 @@ const {
   modbusRTUs,
   modbusTCPs,
   mqtts,
+  modbusChannels,
 } = require("../model/index");
+const { Op } = require("sequelize");
 module.exports = {
-  newDevices: async function (req, res) {
-    const { name, interval, southProtocol, northProtocol, startTime, model } =
+  new: async function (req, res) {
+    const { name, interval, southProtocol, northProtocol, startTime, modelId } =
       req.body;
     try {
       await devices.create(
         {
           name,
           interval,
-          southProtocol: {
-            type: southProtocol.type,
-            [southProtocol.type]: {
-              ...southProtocol,
-            },
+          southProtocol: southProtocol.type,
+          northProtocol: northProtocol.type,
+          [southProtocol.type]: {
+            ...southProtocol,
           },
-          northProtocol: {
-            type: northProtocol.type,
-            [northProtocol.type]: {
-              ...northProtocol,
-            },
+          [northProtocol.type]: {
+            ...northProtocol,
           },
           startTime,
-          modelId: model,
+          modelId: modelId,
         },
         {
           include: [
-            {
-              association: devices.southProtocols,
-              include: [
-                {
-                  association: modbusRTUs.southProtocols,
-                },
-                { association: modbusTCPs.southProtocols },
-              ],
-            },
-            {
-              association: devices.northProtocols,
-              include: [mqtts.northProtocols],
-            },
+            { association: devices.modbusRTUs },
+            { association: devices.modbusTCPs },
+            { association: devices.mqtts },
           ],
         }
       );
@@ -73,9 +61,9 @@ module.exports = {
     }
   },
   delete: async function (req, res) {
-    const { name } = req.query;
+    const { name = null, id = null } = req.query;
     try {
-      await devices.destroy({ where: { name: name } });
+      await devices.destroy({ where: { [Op.or]: { name: name, id: id } } });
       return res.sendStatus(200);
     } catch (err) {
       debug(err.message);
@@ -83,14 +71,15 @@ module.exports = {
     }
   },
   get: async function (req, res) {
-    const { name } = req.query;
+    const { name = null, id = null } = req.query;
     try {
       const result = await devices.findOne({
-        where: { name: name },
+        where: { [Op.or]: { name: name, id: id } },
         include: [
-          { model: models, include: [channels] },
+          { model: models, include: [modbusChannels] },
           { model: modbusRTUs },
           { model: modbusTCPs },
+          { model: mqtts },
         ],
       });
       if (result) {

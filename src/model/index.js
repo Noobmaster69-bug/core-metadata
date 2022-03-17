@@ -5,22 +5,18 @@ const { gatewayInfo } = require("./gateway.model");
 const { mqtts } = require("./northProtocol.model");
 const debug = require("../utils/debug")("model");
 const sequelize = require("../config/sequelize");
-// devices.southProtocols = devices.belongsTo(southProtocols, {
-//   foreignKey: "southProtocolId",
-//   onDelete: "CASCADE",
-// });
-modbusRTUs.devices = modbusRTUs.belongsTo(devices, {
-  foreignKey: "deviesId",
+devices.modbusRTUs = devices.hasOne(modbusRTUs, {
+  foreignKey: "deviceId",
   onDelete: "CASCADE",
 });
-modbusTCPs.devices = modbusTCPs.belongsTo(devices, {
-  foreignKey: "devicesId",
+devices.modbusTCPs = devices.hasOne(modbusTCPs, {
+  foreignKey: "deviceId",
   onDelete: "CASCADE",
 });
-// devices.northProtocols = devices.belongsTo(northProtocols, {
-//   foreignKey: "northProtocolId",
-//   onDelete: "CASCADE",
-// });
+devices.mqtts = devices.hasOne(mqtts, {
+  foreignKey: "deviceId",
+  onDelete: "CASCADE",
+});
 mqtts.devices = mqtts.belongsTo(devices, {
   foreignKey: "devicesId",
   onDelete: "CASCADE",
@@ -49,13 +45,11 @@ async function sync() {
 }
 sync();
 module.exports = {
-  //   southProtocols,
   modbusRTUs,
   modbusTCPs,
   models,
   modbusChannels,
   devices,
   gatewayInfo,
-  //   northProtocols,
   mqtts,
 };

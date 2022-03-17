@@ -17,13 +17,11 @@ const devices = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    northProtocolId: {
-      type: DataTypes.INTEGER,
+    northProtocol: {
+      type: DataTypes.STRING,
     },
-
-    southProtocolId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+    southProtocol: {
+      type: DataTypes.STRING,
     },
     startTime: {
       type: DataTypes.DATE,

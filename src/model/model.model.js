@@ -26,18 +26,6 @@ const models = sequelize.define(
     timestamps: false,
   }
 );
-// const channels = sequelize.define("channels", {
-//   id: {
-//     type: DataTypes.INTEGER,
-//     primaryKey: true,
-//     autoIncrement: true,
-//     unique: true,
-//   },
-//   type: {
-//     type: DataTypes.STRING,
-//     modelId: DataTypes.INTEGER,
-//   },
-// });
 const modbusChannels = sequelize.define(
   "modbusChannels",
   {
@@ -108,6 +96,5 @@ const modbusChannels = sequelize.define(
 );
 module.exports = {
   models,
-  // channels,
   modbusChannels,
 };

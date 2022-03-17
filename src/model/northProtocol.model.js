@@ -7,10 +7,6 @@ const mqtts = sequelize.define("mqtts", {
     primaryKey: true,
     autoIncrement: true,
   },
-  deviceId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
   host: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -60,6 +56,9 @@ const mqtts = sequelize.define("mqtts", {
     type: DataTypes.INTEGER,
     defaultValue: 0,
     allowNull: false,
+  },
+  deviceId: {
+    type: DataTypes.INTEGER,
   },
 });
 module.exports = {

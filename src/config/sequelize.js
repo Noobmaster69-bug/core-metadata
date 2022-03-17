@@ -1,6 +1,5 @@
 const { Sequelize } = require("sequelize");
 const debug = require("../utils/debug")("postgreSQL");
-const { spawn } = require("child_process");
 (async () => {
   const { Client } = require("pg");
   const client = new Client({
@@ -32,8 +31,8 @@ const { spawn } = require("child_process");
 const sequelize = new Sequelize(
   "postgres://postgres:ptn209b3@127.0.0.1:5432/core",
   {
-    logging: (msg) => debug(msg),
-    // logging: false,
+    // logging: (msg) => debug(msg),
+    logging: false,
   }
 );
 async function checkForConnection() {

@@ -1,7 +1,6 @@
 const { models, modbusChannels } = require("../model/index");
 const debug = require("../utils/debug")("app/modelController");
 const { Op } = require("sequelize");
-const { type } = require("express/lib/response");
 const controller = {
   create: async function (req, res) {
     const { name, channels, manufacture, type } = req.body;

@@ -9,11 +9,6 @@ const modbusRTUs = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    name: {
-      type: DataTypes.STRING,
-      primaryKey: true,
-      unique: true,
-    },
     path: {
       type: DataTypes.STRING,
       unique: "compositeIndex",
@@ -40,6 +35,9 @@ const modbusRTUs = sequelize.define(
       type: DataTypes.INTEGER,
       defaultValue: 8,
     },
+    deviceId: {
+      type: DataTypes.INTEGER,
+    },
   },
   {
     timestamps: false,
@@ -54,11 +52,6 @@ const modbusTCPs = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    name: {
-      type: DataTypes.STRING,
-      primaryKey: true,
-      unique: true,
-    },
     host: {
       type: DataTypes.STRING,
       unique: "compositeIndex",
@@ -70,6 +63,9 @@ const modbusTCPs = sequelize.define(
       allowNull: false,
     },
     port: {
+      type: DataTypes.INTEGER,
+    },
+    deviceId: {
       type: DataTypes.INTEGER,
     },
   },
