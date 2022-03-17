@@ -12,6 +12,9 @@ module.exports = {
   new: async function (req, res) {
     const { name, interval, southProtocol, northProtocol, startTime, modelId } =
       req.body;
+    if (northProtocol.type === "mqtt" && northProtocol.wsOption !== undefined) {
+      northProtocol.wsOption = JSON.stringify(northProtocol.wsOption);
+    }
     try {
       await devices.create(
         {

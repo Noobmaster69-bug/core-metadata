@@ -18,7 +18,7 @@ devices.mqtts = devices.hasOne(mqtts, {
   onDelete: "CASCADE",
 });
 mqtts.devices = mqtts.belongsTo(devices, {
-  foreignKey: "devicesId",
+  foreignKey: "deviceId",
   onDelete: "CASCADE",
 });
 devices.models = devices.belongsTo(models, {

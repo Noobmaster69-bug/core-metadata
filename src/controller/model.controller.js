@@ -4,7 +4,6 @@ const { Op } = require("sequelize");
 const controller = {
   create: async function (req, res) {
     const { name, channels, manufacture, type } = req.body;
-    console.log(req.body);
     try {
       if (channels) {
         await models.create(
