@@ -46,7 +46,7 @@ module.exports = {
             },
             {
               model: mqtts,
-              attributes: { exclude: ["deviceId", "id"] },
+              attributes: ["id"],
             },
           ],
         })

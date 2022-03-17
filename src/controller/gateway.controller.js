@@ -8,7 +8,7 @@ async function fetchGatewayId() {
         property: "gatewayId",
       },
     });
-    await client.set("gatewayId", result);
+    await client.set("gatewayId", result.toJSON().values);
   } catch (err) {
     if (err.message === "read ECONNRESET") {
       fetchGatewayId();
