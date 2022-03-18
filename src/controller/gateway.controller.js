@@ -40,29 +40,13 @@ module.exports = {
       }
     }
   },
-  updateGatewayId: async function (req, res) {
-    try {
-      await gatewayInfo.update(
-        {
-          values: req.body.gatewayId,
-        },
-        {
-          where: {
-            property: "gatewayId",
-          },
-        }
-      );
-      res.sendStatus(200);
-    } catch (err) {
-      debug(err.message);
-      res.sendStatus(400);
-    }
-  },
   createGatewayId: async function (req, res) {
     try {
-      await gatewayInfo.create({
-        property: "gatewayId",
-        values: req.body.gatewayId,
+      await gatewayInfo.findOrCreate({
+        where: { property: "gatewayId" },
+        defaults: {
+          values: req.body.gatewayId,
+        },
       });
       await client.set("gatewayId", req.body.gatewayId);
       return res.sendStatus(201);
