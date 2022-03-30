@@ -25,7 +25,7 @@ module.exports = {
               },
             ],
           },
-          attributes: { exclude: ["modelId", "id"] },
+          attributes: { exclude: ["modelId"] },
           include: [
             {
               model: models,

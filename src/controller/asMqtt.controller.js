@@ -21,7 +21,7 @@ module.exports = {
           "username",
           "password",
           "queueQoZero",
-          "QoS",
+          "qos",
         ],
       })
     ).map((e) => e.toJSON());
@@ -29,10 +29,19 @@ module.exports = {
       config.ids = (
         await mqtts.findAll({
           where: { ...config },
-          attributes: ["id"],
+          attributes: ["deviceId"],
         })
-      ).map((e) => e.toJSON().id);
+      ).map((e) => e.toJSON().deviceId);
     }
     res.send(configs);
+  },
+  defaultConfig: async function (req, res) {
+    try {
+      mqtts.create(req.body);
+      res.sendStatus(200);
+    } catch (err) {
+      console.log(err);
+      res.status(400).send(err);
+    }
   },
 };

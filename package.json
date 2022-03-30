@@ -36,7 +36,8 @@
     "pg-hstore": "^2.3.4",
     "pm2": "^5.2.0",
     "redis": "^2.8.0",
-    "sequelize": "^6.17.0"
+    "sequelize": "^6.17.0",
+    "sqlite3": "^5.0.2"
   },
   "devDependencies": {
     "debug": "^4.3.3",

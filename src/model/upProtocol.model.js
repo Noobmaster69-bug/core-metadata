@@ -54,9 +54,9 @@ const mqtts = sequelize.define(
       allowNull: false,
       defaultValue: true,
     },
-    QoS: {
+    qos: {
       type: DataTypes.INTEGER,
-      defaultValue: 0,
+      defaultValue: 2,
       allowNull: false,
     },
     deviceId: {

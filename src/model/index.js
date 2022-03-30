@@ -1,8 +1,8 @@
-const { modbusRTUs, modbusTCPs } = require("./southProtocol.model");
+const { modbusRTUs, modbusTCPs } = require("./downProtocol.model");
 const { models, modbusChannels } = require("./model.model");
 const { devices } = require("./device.model");
 const { gatewayInfo } = require("./gateway.model");
-const { mqtts } = require("./northProtocol.model");
+const { mqtts } = require("./upProtocol.model");
 const debug = require("../utils/debug")("model");
 const sequelize = require("../config/sequelize");
 devices.modbusRTUs = devices.hasOne(modbusRTUs, {
@@ -22,10 +22,10 @@ mqtts.devices = mqtts.belongsTo(devices, {
   onDelete: "CASCADE",
 });
 devices.models = devices.belongsTo(models, {
-  foreignKey: "modelId",
+  foreignKey: { name: "modelId", allowNull: true },
 });
 models.hasOne(devices, {
-  foreignKey: "modelId",
+  foreignKey: { name: "modelId", allowNull: true },
 });
 models.modbusChannels = models.hasMany(modbusChannels, {
   foreignKey: "modelId",

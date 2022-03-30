@@ -106,5 +106,20 @@ const controller = {
       return res.status(400).send(err.message);
     }
   },
+  getModelInfo: async function (req, res) {
+    try {
+      const result = await models.findAll({
+        include: { model: modbusChannels },
+      });
+      if (result) {
+        return res.send(result.map((e) => e.toJSON()));
+      } else {
+        throw new Error();
+      }
+    } catch (err) {
+      debug(err.message);
+      return res.sendStatus(404);
+    }
+  },
 };
 module.exports = controller;
